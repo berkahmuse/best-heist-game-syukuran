@@ -1,3 +1,15 @@
+// The Gilded Cage — a casino heist (best-heist-game-20261122-0559, @syukuran).
+//
+// This entrypoint packages the finished game for the judge: it copies the
+// playable casino-heist game in game/ (three floors of the gilded casino —
+// gaming floor, suites, counting room — with patrolling guards, vision cones,
+// cameras, lasers and loot to lift) plus the four posed screenshots in
+// screenshots/, then writes /output/dossier.json, the summary the judge reads.
+// The game itself is plain static files a desktop browser loads offline; this
+// file only hands it in, it never touches game logic. Run it with
+//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+// and serve the game locally with `node serve.ts` (http://localhost:8080).
+
 // A working best-game-01 entry (Node 22, standard library only): the game is this directory's
 // game/ folder, plain static files a desktop browser loads offline (game/index.html and its ES
 // modules, no library and no network request), and the program hands it in. It copies game/ and
@@ -29,8 +41,10 @@ if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), joi
 // scorer would refuse (more than 4 screenshots or one over 256 KiB; more than 993 files in game/ or 48 MiB of game
 // files, in all, or a path under game/ over 1000 bytes: game/ counts beside /output's own 1000-entry cap, its
 // screenshots/ and dossier.json).
+// The dossier path, kept in one place so the write below stays readable.
+const dossierPath = join(out, 'dossier.json');
 writeFileSync(
-  join(out, 'dossier.json'),
+  dossierPath,
   buildDossier(out, {
     text_max_bytes: 163840,
     screenshots: { max: 4, max_bytes: 262144 },
